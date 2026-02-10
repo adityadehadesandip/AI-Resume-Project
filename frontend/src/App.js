@@ -30,16 +30,23 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      // ✅ Corrected Link
-      const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/resume/analyze", { method: "POST", body: formData });
+      // ✅ FIXED: Changed "/analyze" to "/upload" to match your Java Controller
+      const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/resume/upload", { method: "POST", body: formData });
+      
       if (response.ok) {
         const data = await response.json();
         setResumeResult(data);
+        
+        // Extract Score if present
         const match = data.analysis.match(/ATS Score:\s*(\d+)/);
         if (match) setScore(match[1]);
+        
+        // Refresh History
         fetchHistory();
+      } else {
+        alert("Server Error: " + response.statusText);
       }
-    } catch (e) { alert("Backend not connected."); }
+    } catch (e) { alert("Backend not connected. Please wait for Render to wake up."); }
     setLoadingResume(false);
   };
 
@@ -50,7 +57,7 @@ function App() {
     setChatMessage("");
     setLoadingChat(true);
     try {
-      // ✅ Corrected Link
+      // ✅ Chat Link
       const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,7 +73,7 @@ function App() {
     if (!jobRole) return;
     setLoadingQuestions(true);
     try {
-      // ✅ Corrected Link
+      // ✅ Questions Link
       const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/chat/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -80,7 +87,7 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      // ✅ Corrected Link
+      // ✅ History Link
       const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/resume/history");
       const data = await response.json();
       setHistory(data);
@@ -218,7 +225,7 @@ function App() {
   );
 }
 
-// 🎨 EXPENSIVE STYLING
+// 🎨 STYLING
 const styles = {
   appContainer: { fontFamily: "'Inter', sans-serif", backgroundColor: "#f0f2f5", minHeight: "100vh", paddingBottom: "50px" },
   navbar: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 40px", background: "linear-gradient(90deg, #1e3c72 0%, #2a5298 100%)", color: "white", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" },
@@ -255,5 +262,3 @@ const styles = {
 };
 
 export default App;
-
-// Final deployment fix
