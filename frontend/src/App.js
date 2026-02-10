@@ -30,6 +30,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
     try {
+      // ✅ Corrected Link
       const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/resume/analyze", { method: "POST", body: formData });
       if (response.ok) {
         const data = await response.json();
@@ -49,7 +50,8 @@ function App() {
     setChatMessage("");
     setLoadingChat(true);
     try {
-      const response = await fetch("http://localhost:8082/api/chat", {
+      // ✅ Corrected Link
+      const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: chatMessage }),
@@ -64,7 +66,8 @@ function App() {
     if (!jobRole) return;
     setLoadingQuestions(true);
     try {
-      const response = await fetch("http://localhost:8082/api/chat/questions", {
+      // ✅ Corrected Link
+      const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/chat/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: jobRole }),
@@ -77,7 +80,8 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("http://localhost:8082/api/resume/history");
+      // ✅ Corrected Link
+      const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/resume/history");
       const data = await response.json();
       setHistory(data);
     } catch (error) { console.error("Error fetching history"); }
