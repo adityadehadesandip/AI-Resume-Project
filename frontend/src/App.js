@@ -30,7 +30,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const response = await fetch("http://localhost:8082/api/resume/upload", { method: "POST", body: formData });
+      const response = await fetch("https://ai-resume-project-whrn.onrender.com/api/resume/analyze", { method: "POST", body: formData });
       if (response.ok) {
         const data = await response.json();
         setResumeResult(data);
