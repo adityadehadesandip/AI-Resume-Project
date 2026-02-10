@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/resume")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class ResumeController {
 
     @Autowired

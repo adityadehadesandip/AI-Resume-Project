@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/chat")
-@CrossOrigin(origins = "http://localhost:3000") // Allow React to access this
+@CrossOrigin(origins = "*") // Allow React to access this
 public class ChatController {
 
     @Autowired
