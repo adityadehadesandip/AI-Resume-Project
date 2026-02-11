@@ -21,8 +21,8 @@ public class AIResumeService {
     // METHOD 1: RESUME ANALYZER
     // ---------------------------------------------------------
     public String analyzeResume(String resumeText) {
-        // ✅ CHANGED to 'gemini-1.5-flash-latest' (Correct Name)
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        // ✅ FIXED: Using 'gemini-1.5-flash' (The correct official name)
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
         // 1. Create Request Body
         Map<String, Object> requestBody = new HashMap<>();
@@ -84,8 +84,8 @@ public class AIResumeService {
     // METHOD 2: MOCK INTERVIEW CHAT
     // ---------------------------------------------------------
     public String getInterviewResponse(String userMessage) {
-        // ✅ CHANGED to 'gemini-1.5-flash-latest'
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        // ✅ FIXED: Using 'gemini-1.5-flash'
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
         String prompt = "You are a professional Technical Interviewer. The candidate says: \"" + userMessage + "\". " +
                         "Reply with a short, constructive response or a follow-up technical question. " +
@@ -124,8 +124,8 @@ public class AIResumeService {
     // METHOD 3: GENERATE QUESTIONS
     // ---------------------------------------------------------
     public String generateQuestions(String jobRole) {
-        // ✅ CHANGED to 'gemini-1.5-flash-latest'
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        // ✅ FIXED: Using 'gemini-1.5-flash'
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
         String prompt = "List 5 likely technical interview questions for a '" + jobRole + "' role. " +
                         "Include 2 basic, 2 intermediate, and 1 advanced question. " +
