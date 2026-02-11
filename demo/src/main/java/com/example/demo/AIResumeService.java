@@ -21,27 +21,34 @@ public class AIResumeService {
     // METHOD 1: RESUME ANALYZER (ATS Score + Improvements)
     // ---------------------------------------------------------
     public String analyzeResume(String resumeText) {
-        // We use 'gemini-flash-latest'
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
 
-        // 1. Create the Request
+        // 1. Create the Request Body
         Map<String, Object> requestBody = new HashMap<>();
+        
+        // A. Add Content (The Prompt)
         List<Map<String, Object>> contents = new ArrayList<>();
         Map<String, Object> contentPart = new HashMap<>();
         List<Map<String, Object>> parts = new ArrayList<>();
         Map<String, Object> textPart = new HashMap<>();
 
-        // 🧠 PROMPT: Asks for ATS Score + Keywords
-        String prompt = "You are an expert ATS (Applicant Tracking System) scanner. Analyze the resume text below.\n" +
-                        "1. Give an ATS Score out of 100 based on keyword matching, formatting, and impact.\n" +
-                        "2. List 3-4 Missing Keywords that would help this resume.\n" +
-                        "3. List 3 specific Improvements.\n" +
-                        "Strict Output Format:\n" +
-                        "ATS Score: [Number]/100\n" +
+        // 🧠 IMPROVED PROMPT: Strict Scoring Rules
+        String prompt = "You are a strict ATS (Applicant Tracking System) scanner. Analyze the resume text below with zero creativity.\n" +
+                        "RULES FOR SCORING:\n" +
+                        "- Start with 100 points.\n" +
+                        "- Deduct 10 points if no specific job title is mentioned.\n" +
+                        "- Deduct 5 points for every missing key section (Skills, Experience, Education).\n" +
+                        "- Deduct 5 points if formatting is messy or unclear.\n" +
+                        "- Deduct 5 points if no quantifiable metrics (numbers/%) are found.\n" +
+                        "OUTPUT FORMAT:\n" +
+                        "ATS Score: [Calculated Number]/100\n" +
                         "## Missing Keywords\n" +
-                        "- [Keyword]\n" +
+                        "- [Keyword 1]\n" +
+                        "- [Keyword 2]\n" +
+                        "- [Keyword 3]\n" +
                         "## Improvements\n" +
-                        "- [Improvement]\n\n" +
+                        "- [Strict Actionable Advice 1]\n" +
+                        "- [Strict Actionable Advice 2]\n\n" +
                         "Resume Text:\n" + resumeText;
 
         textPart.put("text", prompt);
@@ -49,6 +56,12 @@ public class AIResumeService {
         contentPart.put("parts", parts);
         contents.add(contentPart);
         requestBody.put("contents", contents);
+
+        // B. Add Generation Config (CRITICAL: Sets Temperature to 0 for Consistency)
+        Map<String, Object> generationConfig = new HashMap<>();
+        generationConfig.put("temperature", 0.0);
+        generationConfig.put("maxOutputTokens", 500);
+        requestBody.put("generationConfig", generationConfig);
 
         // 2. Send to Google
         RestTemplate restTemplate = new RestTemplate();
@@ -75,17 +88,15 @@ public class AIResumeService {
     }
 
     // ---------------------------------------------------------
-    // METHOD 2: MOCK INTERVIEW CHAT (New Feature!)
+    // METHOD 2: MOCK INTERVIEW CHAT
     // ---------------------------------------------------------
     public String getInterviewResponse(String userMessage) {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
 
-        // 🧠 PROMPT: Set the persona to "Interviewer"
         String prompt = "You are a professional Technical Interviewer. The candidate says: \"" + userMessage + "\". " +
                         "Reply with a short, constructive response or a follow-up technical question. " +
                         "Do not include markdown formatting like ** or ##. Keep it conversational.";
 
-        // 1. Create Request
         Map<String, Object> requestBody = new HashMap<>();
         List<Map<String, Object>> contents = new ArrayList<>();
         Map<String, Object> contentPart = new HashMap<>();
@@ -98,7 +109,6 @@ public class AIResumeService {
         contents.add(contentPart);
         requestBody.put("contents", contents);
 
-        // 2. Send to Google
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -106,20 +116,19 @@ public class AIResumeService {
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
-            
-            // 3. Extract Answer
             Map body = response.getBody();
             List<Map> candidates = (List<Map>) body.get("candidates");
             Map content = (Map) candidates.get(0).get("content");
             List<Map> partsResponse = (List<Map>) content.get("parts");
             return (String) partsResponse.get(0).get("text");
-
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
     }
     
- // ❓ NEW METHOD: Generate Interview Questions
+    // ---------------------------------------------------------
+    // METHOD 3: GENERATE QUESTIONS
+    // ---------------------------------------------------------
     public String generateQuestions(String jobRole) {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
 
@@ -127,7 +136,6 @@ public class AIResumeService {
                         "Include 2 basic, 2 intermediate, and 1 advanced question. " +
                         "Output strictly as a numbered list.";
 
-        // (Boilerplate code to talk to Google)
         Map<String, Object> requestBody = new HashMap<>();
         List<Map<String, Object>> contents = new ArrayList<>();
         Map<String, Object> contentPart = new HashMap<>();
