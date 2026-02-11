@@ -21,8 +21,8 @@ public class AIResumeService {
     // METHOD 1: RESUME ANALYZER
     // ---------------------------------------------------------
     public String analyzeResume(String resumeText) {
-        // ✅ Using 'gemini-1.5-flash' (Stable & Fast)
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+        // ✅ CHANGED to 'gemini-1.5-flash-latest' (Correct Name)
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
 
         // 1. Create Request Body
         Map<String, Object> requestBody = new HashMap<>();
@@ -31,7 +31,7 @@ public class AIResumeService {
         List<Map<String, Object>> parts = new ArrayList<>();
         Map<String, Object> textPart = new HashMap<>();
 
-        // 🧠 ENHANCED PROMPT: Explicitly asks for Score & Improvements
+        // 🧠 SCORING PROMPT
         String prompt = "You are a critical HR Resume Evaluator. Analyze the resume text below.\n" +
                         "SCORING CRITERIA (0-100):\n" +
                         "1. Impact (0-40 pts): Does the candidate use numbers, % growth, or specific achievements?\n" +
@@ -46,9 +46,8 @@ public class AIResumeService {
                         "- [Keyword 1]\n" +
                         "- [Keyword 2]\n" +
                         "## Improvements\n" +
-                        "- [Actionable Advice 1 to increase score]\n" +
-                        "- [Actionable Advice 2 to increase score]\n" +
-                        "- [Actionable Advice 3]\n\n" +
+                        "- [Specific Advice 1]\n" +
+                        "- [Specific Advice 2]\n\n" +
                         "Resume Text:\n" + resumeText;
 
         textPart.put("text", prompt);
@@ -57,7 +56,7 @@ public class AIResumeService {
         contents.add(contentPart);
         requestBody.put("contents", contents);
 
-        // B. Temperature 0.4 (Balances Consistency & Intelligence)
+        // B. Temperature 0.4
         Map<String, Object> generationConfig = new HashMap<>();
         generationConfig.put("temperature", 0.4); 
         generationConfig.put("maxOutputTokens", 500);
@@ -85,7 +84,8 @@ public class AIResumeService {
     // METHOD 2: MOCK INTERVIEW CHAT
     // ---------------------------------------------------------
     public String getInterviewResponse(String userMessage) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+        // ✅ CHANGED to 'gemini-1.5-flash-latest'
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
 
         String prompt = "You are a professional Technical Interviewer. The candidate says: \"" + userMessage + "\". " +
                         "Reply with a short, constructive response or a follow-up technical question. " +
@@ -124,7 +124,8 @@ public class AIResumeService {
     // METHOD 3: GENERATE QUESTIONS
     // ---------------------------------------------------------
     public String generateQuestions(String jobRole) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+        // ✅ CHANGED to 'gemini-1.5-flash-latest'
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
 
         String prompt = "List 5 likely technical interview questions for a '" + jobRole + "' role. " +
                         "Include 2 basic, 2 intermediate, and 1 advanced question. " +
