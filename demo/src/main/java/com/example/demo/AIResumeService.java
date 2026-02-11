@@ -14,11 +14,11 @@ import java.util.List;
 @Service
 public class AIResumeService {
 
-    // 🔴 YOUR API KEY
-    private String apiKey = "AIzaSyAuglG7FK15MUFH4XiD5SjG_MvZWNcNjdo"; 
+    // 🔴 YOUR NEW UPDATED API KEY
+    private String apiKey = "AIzaSyDBD2trXKF9T4e_hT_NHcbzXZhzp60gPUQ"; 
 
     // ---------------------------------------------------------
-    // METHOD 1: RESUME ANALYZER (ATS Score + Improvements)
+    // METHOD 1: RESUME ANALYZER (Fixed Scoring Logic)
     // ---------------------------------------------------------
     public String analyzeResume(String resumeText) {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
@@ -26,29 +26,28 @@ public class AIResumeService {
         // 1. Create the Request Body
         Map<String, Object> requestBody = new HashMap<>();
         
-        // A. Add Content (The Prompt)
         List<Map<String, Object>> contents = new ArrayList<>();
         Map<String, Object> contentPart = new HashMap<>();
         List<Map<String, Object>> parts = new ArrayList<>();
         Map<String, Object> textPart = new HashMap<>();
 
-        // 🧠 IMPROVED PROMPT: Strict Scoring Rules
-        String prompt = "You are a strict ATS (Applicant Tracking System) scanner. Analyze the resume text below with zero creativity.\n" +
-                        "RULES FOR SCORING:\n" +
-                        "- Start with 100 points.\n" +
-                        "- Deduct 10 points if no specific job title is mentioned.\n" +
-                        "- Deduct 5 points for every missing key section (Skills, Experience, Education).\n" +
-                        "- Deduct 5 points if formatting is messy or unclear.\n" +
-                        "- Deduct 5 points if no quantifiable metrics (numbers/%) are found.\n" +
+        // 🧠 PROMPT: Judges QUALITY, not just checklist
+        String prompt = "You are a critical HR Resume Evaluator. Analyze the resume text below.\n" +
+                        "SCORING CRITERIA (0-100):\n" +
+                        "1. Impact (0-40 pts): Does the candidate use numbers, % growth, or specific achievements? (Low impact = low score).\n" +
+                        "2. Keywords (0-30 pts): Does the resume have strong industry-specific technical keywords?\n" +
+                        "3. Structure (0-30 pts): Is it professional and clear?\n\n" +
+                        "INSTRUCTIONS:\n" +
+                        "- Be strict. An average resume should get 65-75. A good one gets 80+. Only perfect resumes get 90+.\n" +
+                        "- Do NOT give everyone the same score. Base it on the CONTENT depth.\n" +
                         "OUTPUT FORMAT:\n" +
                         "ATS Score: [Calculated Number]/100\n" +
                         "## Missing Keywords\n" +
                         "- [Keyword 1]\n" +
                         "- [Keyword 2]\n" +
-                        "- [Keyword 3]\n" +
                         "## Improvements\n" +
-                        "- [Strict Actionable Advice 1]\n" +
-                        "- [Strict Actionable Advice 2]\n\n" +
+                        "- [Specific Advice 1]\n" +
+                        "- [Specific Advice 2]\n\n" +
                         "Resume Text:\n" + resumeText;
 
         textPart.put("text", prompt);
@@ -57,9 +56,9 @@ public class AIResumeService {
         contents.add(contentPart);
         requestBody.put("contents", contents);
 
-        // B. Add Generation Config (CRITICAL: Sets Temperature to 0 for Consistency)
+        // B. Temperature 0.4 allows AI to differentiate between good and bad content
         Map<String, Object> generationConfig = new HashMap<>();
-        generationConfig.put("temperature", 0.0);
+        generationConfig.put("temperature", 0.4); 
         generationConfig.put("maxOutputTokens", 500);
         requestBody.put("generationConfig", generationConfig);
 
@@ -78,9 +77,7 @@ public class AIResumeService {
             List<Map> candidates = (List<Map>) body.get("candidates");
             Map content = (Map) candidates.get(0).get("content");
             List<Map> partsResponse = (List<Map>) content.get("parts");
-            String textResponse = (String) partsResponse.get(0).get("text");
-            
-            return textResponse;
+            return (String) partsResponse.get(0).get("text");
 
         } catch (Exception e) {
             return "Error talking to AI: " + e.getMessage();
